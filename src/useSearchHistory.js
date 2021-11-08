@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 async function getSearchHistory() {
   const response = await axios.get(" http://localhost:3000/queries");
@@ -7,22 +7,24 @@ async function getSearchHistory() {
 }
 
 export function useSearchHistory() {
-  const [isFetching, setIsFetching] = useState(false);
-  const [searchHistory, setSearchHistory] = useState([]);
+  const { isFetching, data = [] } = useQuery("history", getSearchHistory);
 
-  useEffect(() => {
-    async function fetchNow() {
-      setIsFetching(true);
-      const data = await getSearchHistory();
-      setSearchHistory(data);
-      setIsFetching(false);
-    }
+  // const [isFetching, setIsFetching] = useState(false);
+  // const [searchHistory, setSearchHistory] = useState([]);
 
-    fetchNow();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchNow() {
+  //     setIsFetching(true);
+  //     const data = await getSearchHistory();
+  //     setSearchHistory(data);
+  //     setIsFetching(false);
+  //   }
+
+  //   fetchNow();
+  // }, []);
 
   return {
     isFetching,
-    searchHistory,
+    searchHistory: data,
   };
 }
