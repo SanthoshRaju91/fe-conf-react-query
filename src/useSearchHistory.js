@@ -1,30 +1,33 @@
 import axios from "axios";
+import { useState } from "react";
 import { useQuery } from "react-query";
 
-async function getSearchHistory() {
-  const response = await axios.get(" http://localhost:3000/queries");
+async function getSearchHistory(page) {
+  const response = await axios.get(
+    `http://localhost:3000/queries/paginate?page=${page - 1}&limit=10`
+  );
   return response.data;
 }
 
 export function useSearchHistory() {
-  const { isFetching, data = [] } = useQuery("history", getSearchHistory);
+  const [page, setPage] = useState(1);
+  const { isFetching, data = {} } = useQuery(
+    ["history", page],
+    () => getSearchHistory(page),
+    {
+      keepPreviousData: true,
+    }
+  );
 
-  // const [isFetching, setIsFetching] = useState(false);
-  // const [searchHistory, setSearchHistory] = useState([]);
-
-  // useEffect(() => {
-  //   async function fetchNow() {
-  //     setIsFetching(true);
-  //     const data = await getSearchHistory();
-  //     setSearchHistory(data);
-  //     setIsFetching(false);
-  //   }
-
-  //   fetchNow();
-  // }, []);
+  function handlePageChange(selectedPage) {
+    setPage(selectedPage);
+  }
 
   return {
     isFetching,
-    searchHistory: data,
+    searchHistory: data.queries || [],
+    page,
+    pages: data.metadata && data.metadata.pages,
+    handlePageChange,
   };
 }
