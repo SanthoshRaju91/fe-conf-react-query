@@ -1,8 +1,9 @@
+import { useContext } from "react";
 import MerchantDetails from "./components/MerchantDetails";
-import useMerchantSearch from "./useMerchantSearch";
+import { MerchantContext } from "./context";
 
 export default function Merchant() {
-  const { data } = useMerchantSearch();
+  const { merchant } = useContext(MerchantContext);
 
-  return <MerchantDetails details={data} />;
+  return <MerchantDetails details={merchant} />;
 }

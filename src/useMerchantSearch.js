@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useMutation } from "react-query";
 import { navigate } from "@reach/router";
+import { useContext } from "react";
+import { MerchantContext } from "./context";
 
 async function search(merchant) {
   const response = await axios.post(
@@ -18,12 +20,14 @@ async function search(merchant) {
 }
 
 export default function useMerchantSearch() {
+  const { updateMerchant } = useContext(MerchantContext);
   const {
     mutate,
     data = {},
     isLoading,
   } = useMutation((merchant) => search(merchant), {
-    onSuccess: () => {
+    onSuccess: (data) => {
+      updateMerchant(data);
       navigate("details");
     },
   });
